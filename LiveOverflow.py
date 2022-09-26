@@ -12,6 +12,10 @@ inputfile = "ips.txt"
 searchterm=""
 publicserverlist="public.txt"
 
+myclient = pymongo.MongoClient("mongodb://PoopenheimerAdministativeUserAccount:PoopenheimerSuperSecureAdminPasswordlol%3A)@45.79.194.63:27017/?authMechanism=DEFAULT&authSource=admin")
+mydb = myclient["Poopenheimer"]
+mycol = mydb["Servers"]
+
 
 fileHandler = open (inputfile, "r")
 listOfLines = fileHandler.readlines()
@@ -54,10 +58,16 @@ async def print_time(threadName):
             threadName.exit()
         try:
             ip = z
-            server = JavaServer(ip,25565)
-            query = server.query()
-            with open(f"{version}.txt","a")as f:
-                f.write(f"[QUERY] Found server: IP: {ip}, Version: {query.software.version}, Player Count: {query.players.online}/{query.players.max}, Player List: {query.players.names}, MOTD: {query.motd}\n")
+            if mycol.count_documents({"IP":ip})!=0:
+                pass
+            else:
+                server = JavaServer(ip,25565)
+                query = server.query()
+                status=server.status()
+                if query.software.version==version:
+                    print("[QUERY} Found server: " + ip + " " + query.software.version + " " + str(query.players.online))
+                    post = {"IP": ip,"MOTD":query.motd,"Version": query.software.version, "Players": str(query.players.online)+"/"+str(query.players.max), "Latency": status.latency,"playerlist":query.players.names,"Found_with":"QUERY","plugin_list":query.software.plugins,"P2W":"False"}
+                    mycol.insert_one(post)
         except Exception as e:
             pass
 

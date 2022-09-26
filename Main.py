@@ -39,7 +39,7 @@ split = list(split_array(masscan, threads))
 
 exitFlag = 0
 
-myclient = pymongo.MongoClient("mongodb://45.79.194.63:27017/")
+myclient = pymongo.MongoClient("mongodb://PoopenheimerAdministativeUserAccount:PoopenheimerSuperSecureAdminPasswordlol%3A)@45.79.194.63:27017/?authMechanism=DEFAULT&authSource=admin")
 mydb = myclient["Poopenheimer"]
 mycol = mydb["Servers"]
 
@@ -70,7 +70,6 @@ async def print_time(threadName):
                 mycol.insert_one(post)
             except Exception as e:
                 try:
-                    ip=z
                     server = JavaServer(ip,25565)
                     status = server.status()
                     print("[STATUS] Found server: " + ip + " " + status.version.name + " " + str(status.players.online))
