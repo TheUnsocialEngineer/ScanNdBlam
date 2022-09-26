@@ -6,6 +6,8 @@ import time
 import asyncio
 import pymongo
 from pymongo import mongo_client
+import ctypes
+libgcc_s = ctypes.CDLL('libgcc_s.so.1')
 
 masscan = []
 inputfile = "ips.txt"
