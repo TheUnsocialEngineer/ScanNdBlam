@@ -55,8 +55,6 @@ class myThread (threading.Thread):
 
 async def print_time(threadName):
     for z in split[int(threadName)]:
-        if exitFlag:
-            threadName.exit()
         try:
             ip = z
             if mycol.count_documents({"IP":ip})!=0:
