@@ -5,7 +5,8 @@ import threading
 import time
 import asyncio
 import pymongo
-
+import ctypes
+libgcc_s = ctypes.CDLL('libgcc_s.so.1')
 
 masscan = []
 inputfile = "ips.txt"
