@@ -18,6 +18,7 @@ with open("config.json", "r") as config_file:
 ipinfo_token = config["ipinfo_token"]
 database_name = config["database_name"]
 collection_name = config["collection_name"]
+batchsize=int(config["batchsize"])
 
 #ipinfo config
 token = "51030d1b61679e"
