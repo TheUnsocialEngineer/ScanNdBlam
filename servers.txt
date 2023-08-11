@@ -1,0 +1,131 @@
+async def process_server(ip_address, port, versions=None):
+    print(F"{ip_address}:{port}")
+    exists = mycol.find_one({"IP": ip_address})
+    if exists:
+        status = await (await JavaServer.async_lookup(ip_address)).async_status()
+        version = status.version.name
+        if versions and version not in versions:
+            print(f"IP: {ip_address} - Skipped: Version '{version}' not in specified versions.")
+            return
+
+        motd = status.description
+        favicon = status.favicon
+        protocol = status.version.protocol
+        online = status.players.online
+        max_players = status.players.max
+        last_update = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+
+        update_fields = {
+            "MOTD": motd,
+            "Favicon": favicon,
+            "Version": version,
+            "Protocol": protocol,
+            "Online": online,
+            "Maximum": max_players,
+            "Last_updated": last_update
+        }
+
+        mycol.update_one({"IP": ip_address}, {"$set": update_fields})
+        print(f"IP: {ip_address} - Updated: Server Is Up To Date!")
+    else:
+        print("no server exist")
+        try:
+            query = await (await JavaServer.async_lookup(ip_address,port)).async_query()
+            status = await (await JavaServer.async_lookup(ip_address,port)).async_status()
+            version = status.version.name
+            if version not in versions:
+                print(f"IP: {ip_address} - Skipped: Version '{version}' not in specified versions.")
+                return
+            
+            #gets ip details
+            details = handler.getDetails(ip_address)
+
+            motd = status.description
+            favicon = status.favicon if status.favicon is not None else False
+            protocol = status.version.protocol
+            brand = query.software.brand
+            online = status.players.online
+            max_players = status.players.max
+            playerlist = []
+            pluginlist = []
+            seed = ""
+            cracked = False
+            p2w = False
+            
+            last_update = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+
+            data = {
+                "IP": ip_address,
+                "Port": port,
+                "MOTD": motd,
+                "Favicon": favicon,
+                "Version": version,
+                "Brand": brand,
+                "Protocol": protocol,
+                "Online": online,
+                "Maximum": max_players,
+                "player_list": playerlist,
+                "plugin_list": pluginlist,
+                "Seed": seed,
+                "Cracked": cracked,
+                "P2W": p2w,
+                "Country": country,
+                "Region": region,
+                "Last_updated": last_update
+            }
+            mycol.insert_one(data)
+
+            print(f"IP: {ip_address} - Query: Server is online! Players: {status.players.online}/{status.players.max}")
+
+        except Exception as query_error:
+            try:
+                status = await (await JavaServer.async_lookup(ip_address)).async_status()
+                version = status.version.name
+                if version not in versions:
+                    print(f"IP: {ip_address} - Skipped: Version '{version}' not in specified versions.")
+                    return
+
+                details = handler.getDetails(ip_address)
+
+                motd = status.description
+                favicon = status.favicon if status.favicon is not None else False
+                protocol = status.version.protocol
+                brand = ""
+                online = status.players.online
+                max_players = status.players.max
+                playerlist = status.players.sample if status.players.sample is not None else []
+                pluginlist = []
+                seed = ""
+                cracked = False
+                p2w = False
+                country = details.country
+                region = details.region
+                last_update = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+
+                data = {
+                    "IP": ip_address,
+                    "Port": port,
+                    "MOTD": motd,
+                    "Favicon": favicon,
+                    "Version": version,
+                    "Brand": brand,
+                    "Protocol": protocol,
+                    "Online": online,
+                    "Maximum": max_players,
+                    "player_list": playerlist,
+                    "plugin_list": pluginlist,
+                    "Seed": seed,
+                    "Cracked": cracked,
+                    "P2W": p2w,
+                    "Country": country,
+                    "Region": region,
+                    "Last_updated": last_update
+                }
+
+                mycol.insert_one(data)
+
+                print(f"IP: {ip_address} - Status: Server is online! Players: {status.players.online}/{status.players.max}")
+
+            except Exception as status_error:
+                #print(status_error)
+                pass
