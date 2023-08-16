@@ -40,13 +40,13 @@ async def ping_server(ip: str,port) -> None:
     favicon = status.favicon if status.favicon is not None else False
     protocol = status.version.protocol
     brand = ""
+    software=""
     online = status.players.online
     max_players = status.players.max
     playerlist = status.players.sample if status.players.sample is not None else []
     pluginlist = []
     seed = ""
     cracked = False
-    p2w = False
     last_update = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
     data = {
