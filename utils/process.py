@@ -47,6 +47,7 @@ async def ping_server(ip: str,port) -> None:
     pluginlist = []
     seed = ""
     cracked = False
+    whitelisted=False
     last_update = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
     data = {
