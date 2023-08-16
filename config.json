@@ -1,6 +1,5 @@
 {
     "ipinfo_token": "51030d1b61679e",
     "database_name": "Eoka",
-    "collection_name": "Servers bleeding",
-    "batchsize":10000
+    "collection_name": "Servers bleeding"
 }

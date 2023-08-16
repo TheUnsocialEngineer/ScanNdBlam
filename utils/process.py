@@ -18,7 +18,6 @@ with open("config.json", "r") as config_file:
 ipinfo_token = config["ipinfo_token"]
 database_name = config["database_name"]
 collection_name = config["collection_name"]
-batchsize=int(config["batchsize"])
 
 #ipinfo config
 token = "51030d1b61679e"
@@ -30,7 +29,6 @@ mycol = mydb[collection_name]
 
 
 async def ping_server(ip: str,port) -> None:
-    print(ip,port)
     try:
         status = await (await JavaServer.async_lookup(ip,port)).async_status()
     except Exception as e:
@@ -38,7 +36,7 @@ async def ping_server(ip: str,port) -> None:
 
     print(f"{ip} - Latency: {status.latency}ms, Version: {status.version.name} Players: {status.players.online}")
     version=status.version.name
-    motd = status.description
+    motd =status.description.to_plain()
     favicon = status.favicon if status.favicon is not None else False
     protocol = status.version.protocol
     brand = ""
@@ -71,19 +69,19 @@ async def ping_server(ip: str,port) -> None:
 
 
 
-async def ping_ips(ips: list[tuple], versions) -> None:
-    to_process: list[tuple] = []  # Change the type annotation and the list type
+async def ping_ips(ips: list[tuple], versions, batch_size) -> None:
+    to_process: list[tuple] = []
 
     for ip, port in ips:  # Iterate through tuples (ip, port)
-        if len(to_process) < 5500:
-            to_process.append((ip, port))  # Append the tuple (ip, port)
-            print(ip, port)
+        print(ip, port)
+        if len(to_process) < batch_size:  # Compare with batch_size
+            to_process.append((ip, port))
         else:
-            tasks = [asyncio.create_task(ping_server(ip_address, port)) for ip_address, port in to_process]  # Pass both ip and port
+            tasks = [asyncio.create_task(ping_server(ip_address, port)) for ip_address, port in to_process]
             await asyncio.wait(tasks)
             to_process = []
 
-    # Handle remaining IPs
     if to_process:
-        tasks = [asyncio.create_task(ping_server(ip_address, port)) for ip_address, port in to_process]  # Pass both ip and port
+        tasks = [asyncio.create_task(ping_server(ip_address, port)) for ip_address, port in to_process]
         await asyncio.wait(tasks)
+

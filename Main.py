@@ -11,6 +11,7 @@ async def main():
     parser.add_argument("--port", type=str, default="25565", help="Port or range of ports to scan (e.g., 25565 or 25565-25575)")
     parser.add_argument("--exclusion", type=str, help="Text file containing IP ranges to exclude")
     parser.add_argument("--versions", nargs="*", help="List of Minecraft versions to search for")
+    parser.add_argument("--batch", type=int, help="size of the batches used for bulk scanning")
     args = parser.parse_args()
 
     start_ip = args.start
@@ -18,6 +19,7 @@ async def main():
     ports = port_parse(args.port)
     exclusion_ranges = exclusion_parse(args.exclusion) if args.exclusion else []
     versions = args.versions
-    await check_minecraft_servers(start_ip, end_ip, ports, exclusion_ranges, versions)
+    batch_size=args.batch
+    await check_minecraft_servers(start_ip, end_ip, ports, exclusion_ranges, batch_size,versions=versions)
 
 asyncio.run(main())
